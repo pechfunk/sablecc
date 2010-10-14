@@ -40,6 +40,12 @@ public final class $2$ extends Token
     {
         ((Analysis) sw).case$2$(this);
     }
+
+    public <OutT, InT> OutT apply(GenericSwitch<OutT, InT> sw, InT helper)
+    {
+        return ((GenericAnalysis<OutT, InT>) sw).case$2$(this, helper);
+    }
+
 }
 
 $
@@ -79,6 +85,11 @@ public final class $2$ extends Token
     public void apply(Switch sw)
     {
         ((Analysis) sw).case$2$(this);
+    }
+
+    public <OutT, InT> OutT apply(GenericSwitch<OutT, InT> sw, InT helper)
+    {
+        return ((GenericAnalysis<OutT, InT>) sw).case$2$(this, helper);
     }
 
     @Override

@@ -12,7 +12,7 @@ package $0$;
 
 import $1$.*;
 
-public interface GenericAnalysis<T,S> extends Switch
+public interface GenericAnalysis<OutT,InT> extends GenericSwitch<OutT,InT>, Switch
 {
     Object getIn(Node node);
     void setIn(Node node, Object o);
@@ -22,17 +22,17 @@ public interface GenericAnalysis<T,S> extends Switch
 
 $
 Macro:GenAnalysisStart
-    T caseStart(Start node, S helper);
+    OutT caseStart(Start node, InT helper);
 
 $
 
 Macro:GenAnalysisBody
-    T case$0$($0$ node, S helper);
+    OutT case$0$($0$ node, InT helper);
 
 $
 
 Macro:GenAnalysisTail
-    T caseEOF(EOF node, S helper);
+    OutT caseEOF(EOF node, InT helper);
 }
 
 $
@@ -45,7 +45,7 @@ package $0$;
 import java.util.*;
 import $1$.*;
 
-public class GenericAnalysisAdapter<T,S> implements GenericAnalysis<T,S>
+public class GenericAnalysisAdapter<OutT,InT> implements GenericAnalysis<OutT,InT>
 {
     private Hashtable<Node,Object> in;
     private Hashtable<Node,Object> out;
@@ -108,7 +108,7 @@ $
 
 Macro:GenAnalysisAdapterStart
 
-    public T caseStart(Start node, S helper)
+    public OutT caseStart(Start node, InT helper)
     {
         return defaultCase(node,helper);
     }
@@ -118,7 +118,7 @@ $
 Macro:GenAnalysisAdapterBody
 
      @Override
-    public T case$0$($0$ node, S helper)
+    public OutT case$0$($0$ node, InT helper)
     {
          return defaultCase(node, helper);
     }
@@ -127,12 +127,12 @@ $
 
 Macro:GenAnalysisAdapterTail
 
-    public T caseEOF(EOF node, S helper)
+    public OutT caseEOF(EOF node, InT helper)
     {
        return defaultCase(node,helper);
     }
 
-    public T defaultCase(@SuppressWarnings("unused") Node node, S helper)
+    public OutT defaultCase(@SuppressWarnings("unused") Node node, InT helper)
     {
         // do nothing
         return null;
@@ -149,14 +149,14 @@ package $0$;
 import java.util.*;
 import $1$.*;
 
-public class GenericDepthFirstAdapter<T,S> extends GenericAnalysisAdapter<T,S>
+public class GenericDepthFirstAdapter<OutT,InT> extends GenericAnalysisAdapter<OutT,InT>
 {
     public void inStart(Start node)
     {
         defaultIn(node);
     }
 
-    public T outStart(Start node, S helper)
+    public OutT outStart(Start node, InT helper)
     {
      return  defaultOut(node,helper);
     }
@@ -166,18 +166,18 @@ public class GenericDepthFirstAdapter<T,S> extends GenericAnalysisAdapter<T,S>
         // Do nothing
     }
 
-    public T defaultOut(@SuppressWarnings("unused") Node node, S helper)
+    public OutT defaultOut(@SuppressWarnings("unused") Node node, InT helper)
     {
         // Do nothing
         return null;
     }
 
     @Override
-    public T caseStart(Start node, S helper)
+    public OutT caseStart(Start node, InT helper)
     {
         inStart(node);
-        node.get$2$().apply(this);
-        node.getEOF().apply(this);
+        node.get$2$().apply(this, helper);
+        node.getEOF().apply(this, helper);
         return outStart(node,helper);
     }
 
@@ -191,14 +191,14 @@ package $0$;
 import java.util.*;
 import $1$.*;
 
-public class GenericReversedDepthFirstAdapter<T,S> extends GenericAnalysisAdapter<T,S>
+public class GenericReversedDepthFirstAdapter<OutT,InT> extends GenericAnalysisAdapter<OutT,InT>
 {
     public void inStart(Start node)
     {
         defaultIn(node);
     }
 
-    public T outStart(Start node, S helper)
+    public OutT outStart(Start node, InT helper)
     {
        return defaultOut(node, helper);
     }
@@ -208,18 +208,18 @@ public class GenericReversedDepthFirstAdapter<T,S> extends GenericAnalysisAdapte
         // Do nothing
     }
 
-    public T defaultOut(@SuppressWarnings("unused") Node node, S helper)
+    public OutT defaultOut(@SuppressWarnings("unused") Node node, InT helper)
     {
         // Do nothing
         return null;
     }
 
     @Override
-    public T caseStart(Start node, S helper)
+    public OutT caseStart(Start node, InT helper)
     {
         inStart(node);
-        node.getEOF().apply(this);
-        node.get$2$().apply(this);
+        node.getEOF().apply(this, helper);
+        node.get$2$().apply(this, helper);
        return outStart(node,helper);
     }
 
@@ -232,7 +232,7 @@ Macro:GenDepthFirstAdapterInOut
         defaultIn(node);
     }
 
-    public T out$0$($0$ node, S helper)
+    public OutT out$0$($0$ node, InT helper)
     {
       return   defaultOut(node,helper);
     }
@@ -242,7 +242,7 @@ $
 Macro:GenDepthFirstAdapterCaseHeader
 
     @Override
-    public T case$0$($0$ node, S helper)
+    public OutT case$0$($0$ node, InT helper)
     {
         in$0$(node);
 
@@ -251,7 +251,7 @@ $
 Macro:GenDepthFirstAdapterCaseBodyNode
         if(node.get$0$() != null)
         {
-            node.get$0$().apply(this);
+            node.get$0$().apply(this, helper);
         }
 
 $
@@ -261,7 +261,7 @@ Macro:GenDepthFirstAdapterCaseBodyList
             List<$1$> copy = new ArrayList<$1$>(node.get$0$());
             for($1$ e : copy)
             {
-                e.apply(this);
+                e.apply(this, helper);
             }
         }
 
@@ -273,7 +273,7 @@ Macro:GenReversedDepthFirstAdapterCaseBodyList
             Collections.reverse(copy);
             for($1$ e : copy)
             {
-                e.apply(this);
+                e.apply(this, helper);
             }
         }
 

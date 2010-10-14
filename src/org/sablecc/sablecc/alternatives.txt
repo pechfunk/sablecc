@@ -107,6 +107,11 @@ Macro:Apply
         ((Analysis) sw).case$0$(this);
     }
 
+    public <OutT, InT> OutT apply(GenericSwitch<OutT, InT> sw, InT helper)
+    {
+        return ((GenericAnalysis<OutT, InT>) sw).case$0$(this, helper);
+    }
+
 $
 
 Macro:GetSetNode

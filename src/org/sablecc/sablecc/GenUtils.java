@@ -78,6 +78,7 @@ public class GenUtils extends DepthFirstAdapter
     createNode();
     createToken();
     create("Switch");
+    create("GenericSwitch");
     create("Switchable");
   }
 
