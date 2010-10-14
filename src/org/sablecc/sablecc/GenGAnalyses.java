@@ -47,8 +47,8 @@ public class GenGAnalyses extends DepthFirstAdapter
       throw new RuntimeException("unable to open genanalyses.txt.");
     }
 
-    pkgDir = new File(ast_ids.astIds.pkgDir, "genanalysis");
-    pkgName = ast_ids.astIds.pkgName.equals("") ? "genanalysis" : ast_ids.astIds.pkgName + ".genanalysis";
+    pkgDir = new File(ast_ids.astIds.pkgDir, "analysis");
+    pkgName = ast_ids.astIds.pkgName.equals("") ? "analysis" : ast_ids.astIds.pkgName + ".genanalysis";
 
     if(!pkgDir.exists())
     {
