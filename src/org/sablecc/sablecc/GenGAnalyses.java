@@ -15,8 +15,10 @@ import java.io.*;
 /**
  * Like {@link GenAnalyses}, but generate a visitor with generic
  * return type.
+ * <p>
+ * This is a quick and dirty copy-clone of {@link GenAnalyses}. 
  *  
- * @author anton (reengineered from decompiled source)
+ * @author anton (reengineered from decompiled source by Paresh Paradkar)
  *
  */
 public class GenGAnalyses extends DepthFirstAdapter
@@ -48,7 +50,7 @@ public class GenGAnalyses extends DepthFirstAdapter
     }
 
     pkgDir = new File(ast_ids.astIds.pkgDir, "analysis");
-    pkgName = ast_ids.astIds.pkgName.equals("") ? "analysis" : ast_ids.astIds.pkgName + ".genanalysis";
+    pkgName = ast_ids.astIds.pkgName.equals("") ? "analysis" : ast_ids.astIds.pkgName + ".analysis";
 
     if(!pkgDir.exists())
     {
@@ -146,11 +148,11 @@ public class GenGAnalyses extends DepthFirstAdapter
     {
       file = new BufferedWriter(
                new FileWriter(
-                 new File(pkgDir, "GenAnalysis.java")));
+                 new File(pkgDir, "GenericAnalysis.java")));
     }
     catch(IOException e)
     {
-      throw new RuntimeException("Unable to create " + new File(pkgDir, "GenAnalysis.java").getAbsolutePath());
+      throw new RuntimeException("Unable to create " + new File(pkgDir, "GenericAnalysis.java").getAbsolutePath());
     }
 
     try
@@ -184,7 +186,7 @@ public class GenGAnalyses extends DepthFirstAdapter
     catch(IOException e)
     {
       throw new RuntimeException("An error occured while writing to " +
-                                 new File(pkgDir, "GenAnalysis.java").getAbsolutePath());
+                                 new File(pkgDir, "GenericAnalysis.java").getAbsolutePath());
     }
 
     try
@@ -203,11 +205,11 @@ public class GenGAnalyses extends DepthFirstAdapter
     {
       file = new BufferedWriter(
                new FileWriter(
-                 new File(pkgDir, "GenAnalysisAdapter.java")));
+                 new File(pkgDir, "GenericAnalysisAdapter.java")));
     }
     catch(IOException e)
     {
-      throw new RuntimeException("Unable to create " + new File(pkgDir, "GenAnalysisAdapter.java").getAbsolutePath());
+      throw new RuntimeException("Unable to create " + new File(pkgDir, "GenericAnalysisAdapter.java").getAbsolutePath());
     }
 
     try
@@ -239,7 +241,7 @@ public class GenGAnalyses extends DepthFirstAdapter
     catch(IOException e)
     {
       throw new RuntimeException("An error occured while writing to " +
-                                 new File(pkgDir, "GenAnalysisAdapter.java").getAbsolutePath());
+                                 new File(pkgDir, "GenericAnalysisAdapter.java").getAbsolutePath());
     }
 
     try
@@ -258,11 +260,11 @@ public class GenGAnalyses extends DepthFirstAdapter
     {
       file = new BufferedWriter(
                new FileWriter(
-                 new File(pkgDir, "GenDepthFirstAdapter.java")));
+                 new File(pkgDir, "GenericDepthFirstAdapter.java")));
     }
     catch(IOException e)
     {
-      throw new RuntimeException("Unable to create " + new File(pkgDir, "GenDepthFirstAdapter.java").getAbsolutePath());
+      throw new RuntimeException("Unable to create " + new File(pkgDir, "GenericDepthFirstAdapter.java").getAbsolutePath());
     }
 
     try
@@ -333,11 +335,11 @@ public class GenGAnalyses extends DepthFirstAdapter
     {
       file = new BufferedWriter(
                new FileWriter(
-                 new File(pkgDir, "GenReversedDepthFirstAdapter.java")));
+                 new File(pkgDir, "GenericReversedDepthFirstAdapter.java")));
     }
     catch(IOException e)
     {
-      throw new RuntimeException("Unable to create " + new File(pkgDir, "GenReversedDepthFirstAdapter.java").getAbsolutePath());
+      throw new RuntimeException("Unable to create " + new File(pkgDir, "GenericReversedDepthFirstAdapter.java").getAbsolutePath());
     }
 
     try

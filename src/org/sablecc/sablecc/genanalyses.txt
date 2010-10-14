@@ -12,7 +12,7 @@ package $0$;
 
 import $1$.*;
 
-public interface GenAnalysis<T,S> extends Switch
+public interface GenericAnalysis<T,S> extends Switch
 {
     Object getIn(Node node);
     void setIn(Node node, Object o);
@@ -45,7 +45,7 @@ package $0$;
 import java.util.*;
 import $1$.*;
 
-public class GenAnalysisAdapter<T,S> implements GenAnalysis<T,S>
+public class GenericAnalysisAdapter<T,S> implements GenericAnalysis<T,S>
 {
     private Hashtable<Node,Object> in;
     private Hashtable<Node,Object> out;
@@ -149,7 +149,7 @@ package $0$;
 import java.util.*;
 import $1$.*;
 
-public class GenDepthFirstAdapter<T,S> extends GenAnalysisAdapter<T,S>
+public class GenericDepthFirstAdapter<T,S> extends GenericAnalysisAdapter<T,S>
 {
     public void inStart(Start node)
     {
@@ -191,7 +191,7 @@ package $0$;
 import java.util.*;
 import $1$.*;
 
-public class GenReversedDepthFirstAdapter<T,S> extends GenAnalysisAdapter<T,S>
+public class GenericReversedDepthFirstAdapter<T,S> extends GenericAnalysisAdapter<T,S>
 {
     public void inStart(Start node)
     {
