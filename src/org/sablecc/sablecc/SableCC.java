@@ -260,6 +260,9 @@ public class SableCC
     System.out.println("Generating analysis classes.");
     tree.apply(new GenAnalyses(ast_ids));
 
+    System.out.println("Generating generic analysis classes.");
+    tree.apply(new GenGAnalyses(ast_ids));
+
     System.out.println("Generating utility classes.");
     tree.apply(new GenUtils(ast_ids));
 
