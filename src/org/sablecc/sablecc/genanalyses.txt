@@ -11,27 +11,48 @@ Macro:GenAnalysisHeader
 package $0$;
 
 import $1$.*;
-
-public interface GenericAnalysis<OutT,InT> extends GenericSwitch<OutT,InT>, Switch
+/**
+ * Visitor for AST nodes. Contains one method per node class. 
+ * 
+ * @param <OutT> Return type of visitation methods
+ * @param <InT> Type of a helper object passed into visitation methods
+ */
+public interface GenericAnalysis<OutT,InT> extends GenericSwitch<OutT,InT>
 {
-    Object getIn(Node node);
-    void setIn(Node node, Object o);
-    Object getOut(Node node);
-    void setOut(Node node, Object o);
-
 
 $
 Macro:GenAnalysisStart
+	/**
+	 * Do something with the Start node. 
+	 *
+	 * @param node the Start node
+	 * @param helper some helper object (e.g. a variable binding context)
+	 * @return some OutT value (or null)
+	 */
     OutT caseStart(Start node, InT helper);
 
 $
 
 Macro:GenAnalysisBody
+	/**
+	 * Do something with a $0$ node. 
+	 *
+	 * @param node the $0$ node
+	 * @param helper some helper object (e.g. a variable binding context)
+	 * @return some OutT value computed from the node (or null)
+	 */
     OutT case$0$($0$ node, InT helper);
 
 $
 
 Macro:GenAnalysisTail
+	/**
+	 * Do something with the EOF node (the last child of the Star node) 
+	 *
+	 * @param node the EOF node
+	 * @param helper some helper object (e.g. a variable binding context)
+	 * @return some OutT value computed from the node (or null)
+	 */
     OutT caseEOF(EOF node, InT helper);
 }
 
@@ -45,69 +66,28 @@ package $0$;
 import java.util.*;
 import $1$.*;
 
+/**
+ * Default implementation of the visitor interface.
+ * <p>
+ * This implementation does not recurse into child nodes for you
+ * -- you may want to use a GenericDepthFirstAdapter for that. 
+ *
+ * @param <OutT> Return type of visitation methods
+ * @param <InT> Type of a helper object passed into visitation methods
+ */
 public class GenericAnalysisAdapter<OutT,InT> implements GenericAnalysis<OutT,InT>
 {
-    private Hashtable<Node,Object> in;
-    private Hashtable<Node,Object> out;
-
-    public Object getIn(Node node)
-    {
-        if(this.in == null)
-        {
-            return null;
-        }
-
-        return this.in.get(node);
-    }
-
-    public void setIn(Node node, Object o)
-    {
-        if(this.in == null)
-        {
-            this.in = new Hashtable<Node,Object>(1);
-        }
-
-        if(o != null)
-        {
-            this.in.put(node, o);
-        }
-        else
-        {
-            this.in.remove(node);
-        }
-    }
-
-    public Object getOut(Node node)
-    {
-        if(this.out == null)
-        {
-            return null;
-        }
-
-        return this.out.get(node);
-    }
-
-    public void setOut(Node node, Object o)
-    {
-        if(this.out == null)
-        {
-            this.out = new Hashtable<Node,Object>(1);
-        }
-
-        if(o != null)
-        {
-            this.out.put(node, o);
-        }
-        else
-        {
-            this.out.remove(node);
-        }
-    }
 
 $
 
 Macro:GenAnalysisAdapterStart
 
+	/**
+	 * Visit a Start node.
+	 * @param node the Start node
+	 * @param helper the helper object
+	 * @return some OutT value (may be null)
+	 */
     public OutT caseStart(Start node, InT helper)
     {
         return defaultCase(node,helper);
@@ -117,6 +97,12 @@ $
 
 Macro:GenAnalysisAdapterBody
 
+	/**
+	 * Visit a $0$ node.
+	 * @param node the $0$ node
+	 * @param helper the helper object
+	 * @return some OutT value (may be null)
+	 */
      @Override
     public OutT case$0$($0$ node, InT helper)
     {
@@ -127,11 +113,24 @@ $
 
 Macro:GenAnalysisAdapterTail
 
+	/**
+	 * Visit the EOF node.
+	 * @param node the EOF node
+	 * @param helper your helper object
+	 * @return some OutT value (maybe null)
+	 */
     public OutT caseEOF(EOF node, InT helper)
     {
        return defaultCase(node,helper);
     }
 
+	/**
+	 * This method will be called by the default implementations
+	 * of all node methods.
+	 * @param node the node
+	 * @param helper your helper object
+	 * @return some OutT value (maybe null)
+	 */
     public OutT defaultCase(@SuppressWarnings("unused") Node node, InT helper)
     {
         // do nothing
@@ -149,33 +148,77 @@ package $0$;
 import java.util.*;
 import $1$.*;
 
+/**
+ * Base class for depth-first traversal visitors which
+ * visit the children left-to-right.
+ * <p>
+ * Subclass this to taste. Your subclassed visitor can 
+ * <ul>
+ *  <li> compute values of type OutT based on the nodes and return them
+ *         (overriding mainly the caseXXX methods) 
+ *   </li>
+ *   <li> update fields of your visitor
+ *         (overriding mainly the inXXX and outXXX methods)  
+ *   </li>
+ * </ul>
+ * Or a mixture of both styles.
+ *
+ * @param <OutT> Return type of visitation methods
+ * @param <InT> Type of a helper object passed into visitation methods
+ */
 public class GenericDepthFirstAdapter<OutT,InT> extends GenericAnalysisAdapter<OutT,InT>
 {
-    public void inStart(Start node)
+	/**
+	 * This method will be called before visiting the Start node
+	 * @param node the Start node.
+	 */
+    protected void inStart(Start node, InT helper)
     {
-        defaultIn(node);
+        defaultIn(node, helper);
     }
 
-    public OutT outStart(Start node, InT helper)
+    /**
+	 * This method will be called after visiting the Start node
+	 * @param node the Start node.
+	 */
+    protected OutT outStart(Start node, InT helper)
     {
-     return  defaultOut(node,helper);
+        return defaultOut(node,helper);
     }
 
-    public void defaultIn(@SuppressWarnings("unused") Node node)
+	/**
+	 * Default implementation of before-visit methods.
+	 * @param node the node which will be visited next
+	 * @param helper the helper object
+	 */
+    protected void defaultIn(@SuppressWarnings("unused") Node node, InT helper)
     {
         // Do nothing
     }
 
-    public OutT defaultOut(@SuppressWarnings("unused") Node node, InT helper)
+	/**
+	 * Default implementation of after-visit methods.
+	 * @param node the node which has been visited
+	 * @return some OutT value (or null)
+	 */
+    protected OutT defaultOut(@SuppressWarnings("unused") Node node, InT helper)
     {
         // Do nothing
         return null;
     }
 
+	/**
+	 * Default implementation of visitation for the Start node.
+	 * Override this if you want to compute something from the OutT results
+	 * of visiting the subnodes.
+	 * 
+	 * @param node the node which has been visited
+	 * @return some OutT value (or null)
+	 */
     @Override
     public OutT caseStart(Start node, InT helper)
     {
-        inStart(node);
+        inStart(node, helper);
         node.get$2$().apply(this, helper);
         node.getEOF().apply(this, helper);
         return outStart(node,helper);
@@ -191,24 +234,31 @@ package $0$;
 import java.util.*;
 import $1$.*;
 
+/**
+ * Base class for depth-first traversal visitors which visit
+ * the children right-to-left. 
+ *
+ * @param <OutT> Return type of visitation methods
+ * @param <InT> Type of a helper object passed into visitation methods
+ */
 public class GenericReversedDepthFirstAdapter<OutT,InT> extends GenericAnalysisAdapter<OutT,InT>
 {
-    public void inStart(Start node)
+    protected void inStart(Start node, InT helper)
     {
-        defaultIn(node);
+        defaultIn(node, helper);
     }
 
-    public OutT outStart(Start node, InT helper)
+    protected OutT outStart(Start node, InT helper)
     {
        return defaultOut(node, helper);
     }
 
-    public void defaultIn(@SuppressWarnings("unused") Node node)
+    protected void defaultIn(@SuppressWarnings("unused") Node node, InT helper)
     {
         // Do nothing
     }
 
-    public OutT defaultOut(@SuppressWarnings("unused") Node node, InT helper)
+    protected OutT defaultOut(@SuppressWarnings("unused") Node node, InT helper)
     {
         // Do nothing
         return null;
@@ -217,7 +267,7 @@ public class GenericReversedDepthFirstAdapter<OutT,InT> extends GenericAnalysisA
     @Override
     public OutT caseStart(Start node, InT helper)
     {
-        inStart(node);
+        inStart(node, helper);
         node.getEOF().apply(this, helper);
         node.get$2$().apply(this, helper);
        return outStart(node,helper);
@@ -227,24 +277,45 @@ $
 
 Macro:GenDepthFirstAdapterInOut
 
-    public void in$0$($0$ node)
+	/**
+	 * Prepare for visiting a $0$.
+	 * @param node the $0$ node to visit
+	 * @param helper the helper object
+	 */ 
+    protected void in$0$($0$ node, InT helper)
     {
-        defaultIn(node);
+        defaultIn(node, helper);
     }
 
-    public OutT out$0$($0$ node, InT helper)
+	/**
+	 * Do something after visiting a $0$.
+	 * @param node the $0$ node that has been visited
+	 * @param helper the helper object
+	 * @return something computed from node (or null)
+	 */ 
+    protected OutT out$0$($0$ node, InT helper)
     {
-      return   defaultOut(node,helper);
+      	return defaultOut(node,helper);
     }
 
 $
 
 Macro:GenDepthFirstAdapterCaseHeader
 
+	/**
+	 * Visiting a $0$. If you don't override this,
+	 * this method will call in$0$, followed by 
+	 * applying this visitor to every child node (discarding the OutT result),
+	 * then call out$0$ and return its result.
+	 * 
+	 * @param node the $0$ node to visit
+	 * @param helper the helper object
+	 * @return some OutT or null
+	 */ 
     @Override
     public OutT case$0$($0$ node, InT helper)
     {
-        in$0$(node);
+        in$0$(node, helper);
 
 $
 
