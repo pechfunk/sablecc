@@ -439,8 +439,9 @@ public class GenerateAlternativeCodeForParser extends DepthFirstAdapter
   }
 
   public void outANewTerm(ANewTerm node)
-  {
+  {  	
     String type_name = (String)CG.getAltTransformElemTypes().get(node);
+    
     if(simpleTermTransformMap.get(node) != null)
     {
       type_name = (String)simpleTermTransformMap.get(node);
@@ -449,20 +450,21 @@ public class GenerateAlternativeCodeForParser extends DepthFirstAdapter
     {
       type_name = (String)CG.getAltTransformElemTypes().get(node);
     }
-    int position = ((Integer)CG.getTermNumbers().get(node)).intValue();
+    final int position = ((Integer)CG.getTermNumbers().get(node)).intValue();
     String newAltName = name((AProdName)node.getProdName());
 
     try
     {
+    	final String type_name_1;
       if(type_name.startsWith("L"))
       {
-        type_name = "list";
+        type_name_1 = "list";
       }
       else
       {
-        type_name = type_name.toLowerCase();
+        type_name_1 = type_name.toLowerCase();
       }
-      macros.apply(file, "ParserNewBodyNew", new String[] {type_name, ""+position, newAltName});
+      macros.apply(file, "ParserNewBodyNew", new String[] {type_name_1, ""+position, newAltName});
 
       if(node.getParams().size() > 0)
       {
@@ -471,41 +473,44 @@ public class GenerateAlternativeCodeForParser extends DepthFirstAdapter
 
         for(int i = 0; i < temp.length; i++)
         {
+        	String type_name_2;
           if(simpleTermTransformMap.get(temp[i]) != null)
           {
-            type_name = (String)simpleTermTransformMap.get(temp[i]);
+            type_name_2 = (String)simpleTermTransformMap.get(temp[i]);
           }
           else
           {
-            type_name = (String)CG.getAltTransformElemTypes().get(temp[i]);
+            type_name_2 = (String)CG.getAltTransformElemTypes().get(temp[i]);
           }
-          position = ((Integer)CG.getTermNumbers().get(temp[i])).intValue();
+          final int position2 = ((Integer)CG.getTermNumbers().get(temp[i])).intValue();
 
           if(i != 0)
           {
             isNotTheFirstParam = ", ";
           }
 
-          if(type_name.equals("null"))
+          if(type_name_2.equals("null"))
           {
             macros.apply(file, "ParserNew&ListBodyParamsNull", new String[] {isNotTheFirstParam+"null"});
           }
           else
           {
-            if(type_name.startsWith("L"))
+          	String type_name_3;
+            if(type_name_2.startsWith("L"))
             {
-              type_name = "list";
+              type_name_3 = "list";
             }
             else
             {
-              type_name = type_name.toLowerCase();
+              type_name_3 = type_name_2.toLowerCase();
             }
-            macros.apply(file, "ParserNew&ListBodyParams", new String[] {isNotTheFirstParam+type_name, ""+position});
+            macros.apply(file, "ParserNew&ListBodyParams", new String[] {isNotTheFirstParam+type_name_3, ""+position2});
           }
 
         }
       }
       macros.apply(file, "ParserNewBodyNewTail");
+      macros.apply(file, "ParserNewBodySetLineNumber", new String[] {type_name_1, ""+position});
       macros.apply(file, "ParserBraceClosing");
     }
     catch(IOException e)

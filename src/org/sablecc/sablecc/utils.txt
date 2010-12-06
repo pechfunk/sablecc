@@ -197,8 +197,6 @@ package $0$;
 public abstract class Token extends Node
 {
     private String text;
-    private int line;
-    private int pos;
 
     public String getText()
     {
@@ -208,26 +206,6 @@ public abstract class Token extends Node
     public void setText(@SuppressWarnings("hiding") String text)
     {
         this.text = text;
-    }
-
-    public int getLine()
-    {
-        return this.line;
-    }
-
-    public void setLine(@SuppressWarnings("hiding") int line)
-    {
-        this.line = line;
-    }
-
-    public int getPos()
-    {
-        return this.pos;
-    }
-
-    public void setPos(@SuppressWarnings("hiding") int pos)
-    {
-        this.pos = pos;
     }
 
     @Override
@@ -262,6 +240,17 @@ import java.util.*;
 public abstract class Node implements Switchable, Cloneable
 {
     private Node parent;
+    /**
+     * 1-based Line number of the begin of the textual extent of this node,
+     * or 0 for synthetic nodes
+     */ 
+    private int line;
+
+    /**
+     * 1-based column number of the begin of the textual extent of this node,
+     * or 0 for synthetic nodes
+     */ 
+    private int pos;
 
     @Override
     public abstract Object clone();
@@ -328,6 +317,27 @@ public abstract class Node implements Switchable, Cloneable
 
         return clone;
     }
+    
+    public int getLine()
+    {
+        return this.line;
+    }
+
+    public void setLine(@SuppressWarnings("hiding") int line)
+    {
+        this.line = line;
+    }
+
+    public int getPos()
+    {
+        return this.pos;
+    }
+
+    public void setPos(@SuppressWarnings("hiding") int pos)
+    {
+        this.pos = pos;
+    }
+
 }
 
 $
