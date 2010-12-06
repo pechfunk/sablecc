@@ -135,14 +135,10 @@ Macro:ParserCommon
     }
 
     /**
-     * Follow the chain of leftmost children looking for a {@link Node}.
-     * (Viewing {@link List}s of Lists of {@link Node}s as a tree).
-     * 
-     * If the chain ends in an empty list, or in a strange object,
-     * we return null. 
+     * DFS for a {@link Node} with line number information.
      * 
      * @param nodeOrList a Node or a list of (lists of...) Node.
-     * @return a Node or null 
+     * @return the leftmost node to have line number, or null. 
      */
     Node findLeftmostDescendant(Object nodeOrList) {
     	if(nodeOrList instanceof List){
@@ -152,8 +148,16 @@ Macro:ParserCommon
     			return null;
     		}
     		else {
-    			Object first = li.get(0);
-    			return findLeftmostDescendant(first);
+    			// DFS for first line-numbered Node
+    			Iterator it= li.iterator(); 
+    			while(it.hasNext()) {
+    				Object first = it.next();
+    				Node n = findLeftmostDescendant(first);
+    				if(n instanceof Node && (n.getLine() != 0)) {
+    					return n;
+    				}
+    			}
+    			return null; // no child had a line number, sniff
     		}
     	} 
     	else if(nodeOrList instanceof Node){
@@ -281,23 +285,23 @@ Macro:ParserNewHeader
     ArrayList new$0$() /* reduce $1$ */
     {
         @SuppressWarnings("hiding") ArrayList nodeList = new ArrayList();
+        LinkedList nodesInTextualOrder = new LinkedList();
 
 
 $
 
 Macro:ParserNewBodyDecl
         @SuppressWarnings("unused") ArrayList nodeArrayList$0$ = pop();
+        nodesInTextualOrder.push(nodeArrayList$0$);
 
 $
 
 Macro:ParserAbstractLineNumberComputation
 
-		// the abstract node gets line number from the lowermost
-		// terminal or nonterminal on the stack. That should be
-		// the textually first, too.
+		// Get line number from a child node as far left as possible
         int concreteLineNumber;
         int concretePos;
-        Node leftmostGrandchild = findLeftmostDescendant(nodeArrayList1);
+        Node leftmostGrandchild = findLeftmostDescendant(nodesInTextualOrder);
         if(leftmostGrandchild != null) {
             concreteLineNumber = leftmostGrandchild.getLine();
             concretePos = leftmostGrandchild.getPos();
