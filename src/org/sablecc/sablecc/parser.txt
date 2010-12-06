@@ -309,6 +309,15 @@ Macro:ParserAbstractLineNumberComputation
         
 $
 
+Macro:ParserAbstractLineNumberGuess
+
+		// Since this reduce-rule reduces Epsilon to a nonterminal,
+		// we're out of luck. Just use default values.
+        int concreteLineNumber = 0;
+        int concretePos = 0;
+        
+$
+
 Macro:ParserNewBodyDeclNull
         ArrayList nodeArrayList$0$ = null;
 

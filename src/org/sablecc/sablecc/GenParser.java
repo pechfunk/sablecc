@@ -445,7 +445,12 @@ public class GenParser extends DepthFirstAdapter
             Element e = (Element) it.next();
             macros.apply(file, e.macro, e.arguments);
           }
-          macros.apply(file, "ParserAbstractLineNumberComputation", new String[] {});
+          if(stack.isEmpty()) {
+          	macros.apply(file, "ParserAbstractLineNumberGuess", new String[] {});
+          }
+          else {
+          	macros.apply(file, "ParserAbstractLineNumberComputation", new String[] {});
+          }
         }
         catch(IOException e)
         {
