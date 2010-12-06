@@ -134,6 +134,36 @@ Macro:ParserCommon
         return this.converter.index;
     }
 
+    /**
+     * Follow the chain of leftmost children looking for a {@link Node}.
+     * (Viewing {@link List}s of Lists of {@link Node}s as a tree).
+     * 
+     * If the chain ends in an empty list, or in a strange object,
+     * we return null. 
+     * 
+     * @param nodeOrList a Node or a list of (lists of...) Node.
+     * @return a Node or null 
+     */
+    Node findLeftmostDescendant(Object nodeOrList) {
+    	if(nodeOrList instanceof List){
+    		List li = (List) nodeOrList;
+    		if(li.isEmpty()){
+    			// no, don't search uncle nodes
+    			return null;
+    		}
+    		else {
+    			Object first = li.get(0);
+    			return findLeftmostDescendant(first);
+    		}
+    	} 
+    	else if(nodeOrList instanceof Node){
+    		return (Node) nodeOrList;
+    	}
+    	else {
+    		return null;
+    	}
+    }
+
     @SuppressWarnings("unchecked")
     public Start parse() throws ParserException, LexerException, IOException
     {
@@ -267,10 +297,10 @@ Macro:ParserAbstractLineNumberComputation
 		// the textually first, too.
         int concreteLineNumber;
         int concretePos;
-        if(nodeArrayList1.size() > 0) {
-            Node theFirstNode = (Node) (nodeArrayList1.get(0));
-            concreteLineNumber = theFirstNode.getLine();
-            concretePos = theFirstNode.getPos();
+        Node leftmostGrandchild = findLeftmostDescendant(nodeArrayList1);
+        if(leftmostGrandchild != null) {
+            concreteLineNumber = leftmostGrandchild.getLine();
+            concretePos = leftmostGrandchild.getPos();
         }	
         else {
         	concreteLineNumber = 0;
