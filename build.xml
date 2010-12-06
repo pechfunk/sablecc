@@ -18,7 +18,7 @@ Global Properties
 -->
 
   <property name="package" value="sablecc"/>
-  <property name="version" value="3.2+gv1"/>
+  <property name="version" value="3.2+gv2"/>
 
   <property name="src.dir" value="src"/>
   <property name="classes.dir" value="classes"/>
